@@ -9,6 +9,7 @@ error MyToken_AllowanceTooLow();
  * @author Adil Choudhury
  * @notice This contract is for creating an ERC-20 token
  * @dev This is an attempt to create an ERC-20 solely based on https://eips.ethereum.org/EIPS/eip-20 with no libraries
+ * @custom:experimental This tag will be used to explain differences Ive found compared to OZ interface
  */
 contract MyToken {
     mapping(address => uint256) private s_balances;
@@ -21,10 +22,24 @@ contract MyToken {
         uint256 _value
     );
 
+    /**
+     * @custom:experimental This is a private variable set in the constructor of the contract.
+     * The method then returns the value of that variable.
+     * On Remix:
+     * 706 gas when called by a contract returning string directly
+     * 3397 gas when called by a contract returning a _name variable
+     */
     function name() public pure returns (string memory) {
         return "My Token";
     }
 
+    /**
+     * @custom:experimental This is a private variable set in the constructor of the contract.
+     * The method then returns the value of that variable.
+     * On Remix:
+     * 728 gas when called by a contract returning string directly
+     * 3420 gas when called by a contract returning a _symbol variable
+     */
     function symbol() public pure returns (string memory) {
         return "AMT";
     }
@@ -33,6 +48,13 @@ contract MyToken {
         return 3;
     }
 
+    /**
+     * @custom:experimental This is a private variable _totalSupply.
+     * The method then returns the value of _totalSupply.
+     * This is because the value of total supply can change with mints and burns.
+     * My contract doesn't use total supply for any logic which makes it useless
+     * I also cannot mint any tokens in this contract
+     */
     function totalSupply() public pure returns (uint256) {
         return 1000;
     }
@@ -41,6 +63,11 @@ contract MyToken {
         return s_balances[_owner];
     }
 
+    /**
+     * @custom:experimental This method uses a hook to check the logic instead of repeating it for multiple methods
+     * It also checks for the 0 address for to and from
+     * It combines transferFrom into it and uses intermediary methods to add the required detail of "from"
+     */
     function transfer(address _to, uint256 _value) public returns (bool) {
         if (_value > balanceOf(msg.sender)) revert MyToken_BalanceTooLow();
         uint256 previousBalanceOfFrom = balanceOf(msg.sender);
@@ -84,6 +111,9 @@ contract MyToken {
     /**
      * @dev There is currently an attack vector in this method where a spender could
      *      front-run an approver changing their spending value allowing them to "double spend their allowance"
+     *
+     * @custom:experimental Line 122 is not there as a contract which can send infinite (like Dex's)
+     * will not be allowed to function at all if the user doesn't have a balance.
      */
 
     function approve(
@@ -102,4 +132,13 @@ contract MyToken {
     ) public view returns (uint256 remaining) {
         return s_allowance[_spender][_owner];
     }
+
+    /**
+     * @custom:experimental Missing the following:
+     * Hooks to use to check logic of balances before and after a transfer
+     * Ability to mint tokens
+     * Ability to burn tokens
+     * Decrease and Increase allowance methods that use the allowance function to update allowance meaning users cant double spend
+     *
+     */
 }
