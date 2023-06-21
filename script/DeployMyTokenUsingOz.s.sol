@@ -7,9 +7,10 @@ import {MyTokenUsingOZ} from "../src/MyTokenUsingOZ.sol";
 contract DeployMyTokenUsingOz is Script {
     uint256 public constant INITIAL_SUPPLY = 1000 ether;
 
-    function run() external {
+    function run() external returns (MyTokenUsingOZ) {
         vm.startBroadcast();
-        new MyTokenUsingOZ(INITIAL_SUPPLY);
+        MyTokenUsingOZ myTokenUsingOZ = new MyTokenUsingOZ(INITIAL_SUPPLY);
         vm.stopBroadcast();
+        return myTokenUsingOZ;
     }
 }
