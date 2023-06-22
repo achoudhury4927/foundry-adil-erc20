@@ -26,6 +26,17 @@ contract MyTokenUsingOZTest is Test {
         assertEq(startingBalace, myTokenUsingOZ.balanceOf(bob));
     }
 
+    function testBobsBalanceAfterTransfer() public {
+        uint256 transferAmount = 10 ether;
+        vm.prank(bob);
+        myTokenUsingOZ.transfer(alice, transferAmount);
+        assertEq(myTokenUsingOZ.balanceOf(alice), transferAmount);
+        assertEq(
+            myTokenUsingOZ.balanceOf(bob),
+            startingBalace - transferAmount
+        );
+    }
+
     function testInitialSupply() public {
         assertEq(myTokenUsingOZ.totalSupply(), deployer.INITIAL_SUPPLY());
     }
