@@ -17,28 +17,28 @@ contract MyTokenTest is Test {
         myToken = new MyToken();
     }
 
-    function testName() public {
+    function test_Name() public {
         assertEq("My Token", myToken.name());
     }
 
-    function testSymbol() public {
+    function test_Symbol() public {
         assertEq("AMT", myToken.symbol());
     }
 
-    function testDecimals() public {
+    function test_Decimals() public {
         assertEq(3, myToken.decimals());
     }
 
-    function testTotalSupply() public {
+    function test_TotalSupply() public {
         assertEq(1000, myToken.totalSupply());
     }
 
-    function testBalanceOf() public {
+    function test_BalanceOf() public {
         assertEq(0, myToken.balanceOf(msg.sender));
     }
 
     //This test fails highlighting the contract is unuseable as an ERC-20
-    function testTransfer() public {
+    function testFail_Transfer() public {
         myToken.transfer(alice, 1);
     }
 
