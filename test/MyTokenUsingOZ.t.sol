@@ -22,7 +22,7 @@ contract MyTokenUsingOZTest is Test {
         vm.prank(msg.sender);
         myTokenUsingOZ.transfer(bob, startingBalace);
 
-        // Alice approves Bob to spend tokens on her behalf
+        // Bob approves Alice to spend tokens on her behalf
         vm.prank(bob);
         myTokenUsingOZ.approve(alice, initialAllowance);
     }
@@ -112,6 +112,9 @@ contract MyTokenUsingOZTest is Test {
     //     vm.expectRevert();
     //     MintableToken(address(myTokenUsingOZ)).mint(address(this), 1);
     // }
+
+    //################################## Approve Tests ##################################
+
     function test_ApproveAddsToAllowanceMappingCorrectly() public {
         uint256 transferAmount = 500;
         vm.prank(alice);
@@ -131,5 +134,125 @@ contract MyTokenUsingOZTest is Test {
         vm.expectEmit(true, true, true, true);
         emit Approval(alice, bob, transferAmount);
         myTokenUsingOZ.approve(bob, transferAmount);
+    }
+
+    function test_RevertIf_ApproveFromAddressIsZeroAddress() public {
+        uint256 transferAmount = 500;
+        vm.prank(address(0));
+        vm.expectRevert(bytes("ERC20: approve from the zero address"));
+        myTokenUsingOZ.approve(bob, transferAmount);
+    }
+
+    function test_RevertIf_ApproveToAddressIsZeroAddress() public {
+        uint256 transferAmount = 500;
+        vm.prank(alice);
+        vm.expectRevert(bytes("ERC20: approve to the zero address"));
+        myTokenUsingOZ.approve(address(0), transferAmount);
+    }
+
+    //################################## TransferFrom Tests ##################################
+
+    function test_ApprovedCanSpendAllowance() public {
+        uint256 transferAmount = 10;
+        vm.prank(alice);
+        bool success = myTokenUsingOZ.transferFrom(bob, alice, transferAmount);
+        assertEq(success, true, "transferFrom returns true");
+        assertEq(
+            myTokenUsingOZ.balanceOf(bob),
+            startingBalace - transferAmount,
+            "Bobs balance reduced by transferFrom"
+        );
+        assertEq(
+            myTokenUsingOZ.balanceOf(alice),
+            transferAmount,
+            "Alices balance increased by transferFrom"
+        );
+    }
+
+    function test_EmitTransfer_AfterTransferFrom() public {
+        uint256 transferAmount = 10;
+        vm.prank(alice);
+        vm.expectEmit(true, true, true, true);
+        emit Transfer(bob, alice, transferAmount);
+        myTokenUsingOZ.transferFrom(bob, alice, transferAmount);
+    }
+
+    function test_RevertIf_InsufficientAllowance() public {
+        uint256 transferAmount = 10 ether;
+        vm.prank(alice);
+        vm.expectRevert(bytes("ERC20: insufficient allowance"));
+        myTokenUsingOZ.transferFrom(bob, alice, transferAmount);
+    }
+
+    function test_AllowanceIsReducedByAmountAfterTransferFrom() public {
+        uint256 transferAmount = 10;
+        uint256 previousAllowance = myTokenUsingOZ.allowance(bob, alice);
+        vm.prank(alice);
+        myTokenUsingOZ.transferFrom(bob, alice, transferAmount);
+        uint256 newAllowance = myTokenUsingOZ.allowance(bob, alice);
+        assertEq(
+            newAllowance,
+            previousAllowance - transferAmount,
+            "Allowance reduced after spend"
+        );
+    }
+
+    //################################## IncreaseAllowance Tests ##################################
+
+    function test_AllowanceUpdatedAfterIncreaseAllowance() public {
+        uint256 previousAllowance = myTokenUsingOZ.allowance(bob, alice);
+        vm.prank(bob);
+        bool success = myTokenUsingOZ.increaseAllowance(
+            alice,
+            initialAllowance
+        );
+        assertTrue(success);
+        assertEq(
+            previousAllowance + initialAllowance,
+            myTokenUsingOZ.allowance(bob, alice),
+            "Allowance increased"
+        );
+    }
+
+    function test_AllowanceUpdatedByZeroAfterIncreaseAllowance() public {
+        uint256 previousAllowance = myTokenUsingOZ.allowance(bob, alice);
+        vm.prank(bob);
+        myTokenUsingOZ.increaseAllowance(alice, 0);
+        assertEq(
+            previousAllowance,
+            myTokenUsingOZ.allowance(bob, alice),
+            "Allowance increased by zero"
+        );
+    }
+
+    //################################## DecreaseAllowance Tests ##################################
+
+    function test_AllowanceUpdatedAfterDecreaseAllowance() public {
+        uint256 previousAllowance = myTokenUsingOZ.allowance(bob, alice);
+        vm.prank(bob);
+        bool success = myTokenUsingOZ.decreaseAllowance(alice, 10);
+        assertTrue(success);
+        assertEq(
+            previousAllowance - 10,
+            myTokenUsingOZ.allowance(bob, alice),
+            "Allowance decreased"
+        );
+    }
+
+    function test_AllowanceUpdatedByZeroAfterDecreaseAllowance() public {
+        uint256 previousAllowance = myTokenUsingOZ.allowance(bob, alice);
+        vm.prank(bob);
+        myTokenUsingOZ.decreaseAllowance(alice, 0);
+        assertEq(
+            previousAllowance,
+            myTokenUsingOZ.allowance(bob, alice),
+            "Allowance decreased by zero"
+        );
+    }
+
+    function test_RevertIf_DecreaseAmountGreaterThanBalance() public {
+        vm.prank(bob);
+        vm.expectRevert(bytes("ERC20: decreased allowance below zero"));
+        myTokenUsingOZ.decreaseAllowance(alice, initialAllowance + 10);
     }
 }
