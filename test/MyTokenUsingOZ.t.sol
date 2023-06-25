@@ -64,6 +64,7 @@ contract MyTokenUsingOZTest is Test {
     }
 
     //################################## Transfer Tests ##################################
+
     function test_BalancesAfterTransfer() public {
         uint256 transferAmount = 10 ether;
         vm.prank(bob);
@@ -107,11 +108,6 @@ contract MyTokenUsingOZTest is Test {
         vm.expectRevert(bytes("ERC20: transfer amount exceeds balance"));
         myTokenUsingOZ.transfer(alice, 10000 ether);
     }
-
-    // function testUsersCantMint() public {
-    //     vm.expectRevert();
-    //     MintableToken(address(myTokenUsingOZ)).mint(address(this), 1);
-    // }
 
     //################################## Approve Tests ##################################
 
