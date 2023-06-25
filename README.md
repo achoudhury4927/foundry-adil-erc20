@@ -172,13 +172,13 @@ Project Link: [https://github.com/achoudhury4927/foundry-adil-erc20](https://git
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/achoudhury4927/guess-me-smart-contract.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/achoudhury4927/foundry-adil-erc20.svg?style=for-the-badge
 [contributors-url]: https://github.com/achoudhury4927/foundry-adil-erc20/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/achoudhury4927/guess-me-smart-contract.svg?style=for-the-badge
+[forks-shield]: https://img.shields.io/github/forks/achoudhury4927/foundry-adil-erc20.svg?style=for-the-badge
 [forks-url]: https://github.com/achoudhury4927/foundry-adil-erc20/network/members
-[stars-shield]: https://img.shields.io/github/stars/achoudhury4927/guess-me-smart-contract.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/achoudhury4927/foundry-adil-erc20.svg?style=for-the-badge
 [stars-url]: https://github.com/achoudhury4927/foundry-adil-erc20/stargazers
-[issues-shield]: https://img.shields.io/github/issues/achoudhury4927/guess-me-smart-contract.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/achoudhury4927/foundry-adil-erc20.svg?style=for-the-badge
 [issues-url]: https://github.com/achoudhury4927/foundry-adil-erc20/issues
-[license-shield]: https://img.shields.io/github/license/achoudhury4927/guess-me-smart-contract?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/achoudhury4927/foundry-adil-erc20?style=for-the-badge
 [license-url]: https://github.com/achoudhury4927/foundry-adil-erc20/blob/master/LICENSE.txt
